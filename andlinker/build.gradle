@@ -22,7 +22,8 @@ android {
 dependencies {
     compileOnly deps.rx.java
     compileOnly deps.rx.java2
+    compileOnly deps.rx.java3
 }
 
 apply from: 'properties.gradle'
-apply from: 'maven-publish.gradle'
+//apply from: 'maven-publish.gradle'

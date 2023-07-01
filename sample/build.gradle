@@ -41,4 +41,6 @@ dependencies {
     // rxjava
     implementation deps.rx.java2
     implementation deps.rx.android2
+    implementation deps.rx.java3
+    implementation deps.rx.android3
 }

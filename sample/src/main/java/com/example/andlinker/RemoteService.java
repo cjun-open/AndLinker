@@ -117,5 +117,10 @@ public class RemoteService extends Service {
             datas.add(new ParcelableObj(2, 22.2f, "world"));
             return datas;
         }
+
+        @Override
+        public List<ParcelableObj> getDatas_v2() {
+            return getDatas();
+        }
     };
 }

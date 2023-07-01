@@ -1,17 +1,19 @@
 package com.example.andlinker;
 
 import android.graphics.Rect;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
 
 import com.codezjx.andlinker.AndLinker;
 import com.codezjx.andlinker.Call;
 import com.codezjx.andlinker.Callback;
 import com.codezjx.andlinker.adapter.OriginalCallAdapterFactory;
 import com.codezjx.andlinker.adapter.rxjava2.RxJava2CallAdapterFactory;
+import com.codezjx.andlinker.adapter.rxjava3.RxJava3CallAdapterFactory;
 import com.codezjx.andlinker.annotation.RemoteInterface;
 
 import java.util.List;
@@ -20,6 +22,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class BindingActivity extends AppCompatActivity implements AndLinker.BindCallback {
@@ -46,6 +51,7 @@ public class BindingActivity extends AppCompatActivity implements AndLinker.Bind
                 //.addCallAdapterFactory(OriginalCallAdapterFactory.create(callbackExecutor))
                 .addCallAdapterFactory(OriginalCallAdapterFactory.create()) // Basic
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())  // RxJava2
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())  // RxJava3
                 .build();
         mLinker.setBindCallback(this);
         mLinker.registerObject(mRemoteCallback);
@@ -66,7 +72,7 @@ public class BindingActivity extends AppCompatActivity implements AndLinker.Bind
         mRemoteTask = null;
     }
 
-    @OnClick({R.id.btn_pid, R.id.btn_basic_types, R.id.btn_call_adapter, R.id.btn_rxjava2_call_adapter,
+    @OnClick({R.id.btn_pid, R.id.btn_basic_types, R.id.btn_call_adapter, R.id.btn_rxjava2_call_adapter, R.id.btn_rxjava3_call_adapter,
             R.id.btn_callback, R.id.btn_directional, R.id.btn_oneway})
     public void onClick(View view) {
         if (mRemoteService == null || mRemoteTask == null || !mLinker.isBind()) {
@@ -106,6 +112,32 @@ public class BindingActivity extends AppCompatActivity implements AndLinker.Bind
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(datas -> Toast.makeText(this, "getDatas() return: " + datas, Toast.LENGTH_LONG).show());
+                break;
+            case R.id.btn_rxjava3_call_adapter:
+                mRemoteTask.getDatas_v2()
+                        .subscribeOn(io.reactivex.rxjava3.schedulers.Schedulers.io())
+                        .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<List<ParcelableObj>>() {
+                            @Override
+                            public void onSubscribe(@NonNull Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(@NonNull List<ParcelableObj> datas) {
+                                Toast.makeText(BindingActivity.this, "getDatas_v2() return: " + datas, Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        });
                 break;
             case R.id.btn_callback:
                 mRemoteService.registerCallback(mRemoteCallback);
@@ -160,5 +192,6 @@ public class BindingActivity extends AppCompatActivity implements AndLinker.Bind
 
         Observable<List<ParcelableObj>> getDatas();
 
+        io.reactivex.rxjava3.core.Observable<List<ParcelableObj>> getDatas_v2();
     }
 }

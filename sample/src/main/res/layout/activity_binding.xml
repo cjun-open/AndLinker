@@ -33,13 +33,20 @@
         android:layout_height="wrap_content"
         android:text="RxJava2 call adapter"
         app:layout_constraintTop_toBottomOf="@id/btn_call_adapter"/>
+
+    <Button
+        android:id="@+id/btn_rxjava3_call_adapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RxJava3 call adapter"
+        app:layout_constraintTop_toBottomOf="@id/btn_rxjava2_call_adapter"/>
     
     <Button
         android:id="@+id/btn_callback"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Callback"
-        app:layout_constraintTop_toBottomOf="@id/btn_rxjava2_call_adapter"/>
+        app:layout_constraintTop_toBottomOf="@id/btn_rxjava3_call_adapter"/>
 
     <Button
         android:id="@+id/btn_directional"

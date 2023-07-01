@@ -13,5 +13,6 @@ public interface IRemoteTask {
     int remoteCalculate(int a, int b);
 
     List<ParcelableObj> getDatas();
-    
+
+    List<ParcelableObj> getDatas_v2();
 }
