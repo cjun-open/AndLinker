@@ -9,11 +9,21 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.GsonUtils;
 import com.codezjx.andlinker.AndLinkerBinder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class RemoteService extends Service {
 
@@ -119,8 +129,47 @@ public class RemoteService extends Service {
         }
 
         @Override
-        public List<ParcelableObj> getDatas_v2() {
+        public List<ParcelableObj> getDatasV2() {
             return getDatas();
+        }
+
+        @Override
+        public String getString() {
+            final String[] str = new String[1];
+            Observable.create(new ObservableOnSubscribe<List<ParcelableObj>>() {
+                @Override
+                public void subscribe(@NonNull ObservableEmitter<List<ParcelableObj>> emitter) throws Throwable {
+                    Thread.sleep(2000);
+                    if (true){
+                        throw new Exception("test exception");
+                    }
+                    str[0] = GsonUtils.toJson(new NormalObj(1, 11.1f, "getString"));
+                }
+            })
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .subscribe(new Observer<List<ParcelableObj>>() {
+                        @Override
+                        public void onSubscribe(@NonNull Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(@NonNull List<ParcelableObj> parcelableObjs) {
+
+                        }
+
+                        @Override
+                        public void onError(@NonNull Throwable e) {
+                            str[0] = e.getMessage();
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+            return str[0];
         }
     };
 }

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Toast;
 
 
+import com.blankj.utilcode.util.GsonUtils;
 import com.codezjx.andlinker.AndLinker;
 import com.codezjx.andlinker.Call;
 import com.codezjx.andlinker.Callback;
@@ -25,6 +26,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
+import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class BindingActivity extends AppCompatActivity implements AndLinker.BindCallback {
@@ -114,23 +117,36 @@ public class BindingActivity extends AppCompatActivity implements AndLinker.Bind
                         .subscribe(datas -> Toast.makeText(this, "getDatas() return: " + datas, Toast.LENGTH_LONG).show());
                 break;
             case R.id.btn_rxjava3_call_adapter:
-                mRemoteTask.getDatas_v2()
+                mRemoteTask.getString()
+                        .map(new Function<String, NormalObj>() {
+                            @Override
+                            public NormalObj apply(String s) throws Throwable {
+                                try{
+                                    NormalObj normalObj = GsonUtils.fromJson(s, NormalObj.class);
+                                    return normalObj;
+                                }catch (Exception e){
+                                    throw new Exception(s);
+                                }
+                            }
+                        })
                         .subscribeOn(io.reactivex.rxjava3.schedulers.Schedulers.io())
                         .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<List<ParcelableObj>>() {
+                        .subscribe(new Observer<NormalObj>() {
                             @Override
                             public void onSubscribe(@NonNull Disposable d) {
 
                             }
 
                             @Override
-                            public void onNext(@NonNull List<ParcelableObj> datas) {
-                                Toast.makeText(BindingActivity.this, "getDatas_v2() return: " + datas, Toast.LENGTH_LONG).show();
+                            public void onNext(@NonNull NormalObj normalObj) {
+                                Toast.makeText(BindingActivity.this,
+                                        "btn_rxjava3_call_adapter return: " + normalObj, Toast.LENGTH_LONG).show();
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-
+                                Toast.makeText(BindingActivity.this,
+                                        "btn_rxjava3_call_adapter onError: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
 
                             @Override
@@ -192,6 +208,8 @@ public class BindingActivity extends AppCompatActivity implements AndLinker.Bind
 
         Observable<List<ParcelableObj>> getDatas();
 
-        io.reactivex.rxjava3.core.Observable<List<ParcelableObj>> getDatas_v2();
+        io.reactivex.rxjava3.core.Observable<List<ParcelableObj>> getDatasV2();
+
+        io.reactivex.rxjava3.core.Observable<String> getString();
     }
 }

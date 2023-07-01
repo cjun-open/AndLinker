@@ -4,6 +4,8 @@ import com.codezjx.andlinker.annotation.RemoteInterface;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Observable;
+
 /**
  * Created by codezjx on 2018/3/14.<br/>
  */
@@ -14,5 +16,7 @@ public interface IRemoteTask {
 
     List<ParcelableObj> getDatas();
 
-    List<ParcelableObj> getDatas_v2();
+    List<ParcelableObj> getDatasV2();
+
+    String getString();
 }
